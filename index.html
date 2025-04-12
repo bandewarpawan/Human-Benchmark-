@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Benchmark</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .card {
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        /* Reaction test styles */
+        .reaction-box {
+            width: 100%;
+            height: 300px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        /* Memory game styles */
+        .memory-card {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+        
+        .memory-card-inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .memory-card-front, .memory-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .memory-card-back {
+            transform: rotateY(180deg);
+        }
+        
+        /* Aim test styles */
+        .aim-target {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Certificate styles */
+        .certificate {
+            border: 15px solid #28a745;
+            padding: 20px;
+            width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            position: relative;
+        }
+        
+        .certificate:before {
+            content: '';
+            position: absolute;
+            border: 2px solid #28a745;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+        }
+        
+        .certificate-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Typing test styles */
+        .typing-box {
+            width: 100%;
+            min-height: 200px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #fff;
+            position: relative;
+        }
+        
+        .typing-text {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #6b7280;
+        }
+        
+        .typing-text span {
+            position: relative;
+        }
+        
+        .typing-text span.correct {
+            color: #10b981;
+        }
+        
+        .typing-text span.incorrect {
+            color: #ef4444;
+            text-decoration: underline;
+        }
+        
+        .typing-text span.active {
+            background-color: #dbeafe;
+        }
+        
+        .typing-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .typing-timer {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .typing-results {
+            display: none;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .typing-stat {
+            display: inline-block;
+            margin: 8px 16px;
+            text-align: center;
+        }
+        
+        .typing-stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .typing-stat-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        /* Social media icons */
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+        
+        .facebook {
+            background-color: #1877f2;
+        }
+        
+        .twitter {
+            background-color: #1da1f2;
+        }
+        
+        .instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Player name styles */
+        .player-name-badge {
+            background-color: #4b5563;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 1rem;
+        }
+
+        .player-name-badge i {
+            margin-right: 0.5rem;
+        }
+
+        .player-name-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .player-name-modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        /* Game score notification */
+        .score-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(200%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .score-notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Player name modal -->
+    <div id="playerNameModal" class="player-name-modal">
+        <div class="player-name-modal-content">
+            <h2 class="text-2xl font-bold mb-4 text-center">Welcome to Human Benchmark!</h2>
+            <p class="mb-4 text-center">Please enter your name to start:</p>
+            <div class="mb-4">
+                <input type="text" id="playerNameInput" class="w-full p-3 border rounded" placeholder="Your name">
+            </div>
+            <div class="text-center">
+                <button id="savePlayerName" class="btn-primary">Start Testing</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score notification -->
+    <div id="scoreNotification" class="score-notification">
+        <span id="scoreNotificationText"></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-blue-600">Human Benchmark</span>
+                    <div id="playerNameDisplay" class="player-name-badge hidden">
+                        <i class="fas fa-user"></i>
+                        <span id="currentPlayerName"></span>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-4">
+                    <a href="#" class="nav-link" data-page="home">Home</a>
+                    <a href="#" class="nav-link" data-page="reaction">Reaction Test</a>
+                    <a href="#" class="nav-link" data-page="typing">Typing Test</a>
+                    <a href="#" class="nav-link" data-page="cps">CPS Test</a>
+                    <a href="#" class="nav-link" data-page="memory">Memory Game</a>
+                    <a href="#" class="nav-link" data-page="aim">Aim Test</a>
+                    <a href="#" class="nav-link" data-page="leaderboard">Leaderboard</a>
+                    <a href="#" class="nav-link" data-page="certificate">Certificate</a>
+                    <a href="#" class="nav-link" data-page="login">Login</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="menuButton" class="focus:outline-none">
+                        <i class="fas fa-bars text-blue-600 text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="hidden md:hidden px-4 pb-4">
+            <a href="#" class="block py-2 nav-link" data-page="home">Home</a>
+            <a href="#" class="block py-2 nav-link" data-page="reaction">Reaction Test</a>
+            <a href="#" class="block py-2 nav-link" data-page="typing">Typing Test</a>
+            <a href="#" class="block py-2 nav-link" data-page="cps">CPS Test</a>
+            <a href="#" class="block py-2 nav-link" data-page="memory">Memory Game</a>
+            <a href="#" class="block py-2 nav-link" data-page="aim">Aim Test</a>
+            <a href="#" class="block py-2 nav-link" data-page="leaderboard">Leaderboard</a>
+            <a href="#" class="block py-2 nav-link" data-page="certificate">Certificate</a>
+            <a href="#" class="block py-2 nav-link" data-page="login">Login</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Test Your Cognitive Skills</h1>
+                <p class="text-xl text-gray-600">Challenge yourself with our range of cognitive and reflex tests</p>
+                <p class="mt-2"><span id="welcomePlayerName" class="font-bold text-blue-600"></span></p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Reaction Test Card -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="h-40 bg-blue-500 flex items-center justify-center">
+                        <i class="fas fa-bolt text-white text-5xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Reaction Time Test</h3>
+                        <p class="text-gray-600 mb-4">Test how quickly you can react to a visual stimulus.</p>
+                        <button class="btn-primary nav-link" data-page="reaction">Start Test</button>
+                    </div>
+                </div>
+                
+                <!-- Typing Test Card -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="h-40 bg-green-500 flex items-center justify-center">
+                        <i class="fas fa-keyboard text-white text-5xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Typing Speed Test</h3>
+                        <p class="text-gray-600 mb-4">Measure your typing speed and accuracy.</p>
+                        <button class="btn-primary nav-link" data-page="typing">Start Test</button>
+                    </div>
+                </div>
+                
+                <!-- CPS Test Card -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="h-40 bg-yellow-500 flex items-center justify-center">
+                        <i class="fas fa-mouse-pointer text-white text-5xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Clicks Per Second</h3>
+                        <p class="text-gray-600 mb-4">How fast can you click in a given time period?</p>
+                        <button class="btn-primary nav-link" data-page="cps">Start Test</button>
+                    </div>
+                </div>
+                
+                <!-- Memory Test Card -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="h-40 bg-purple-500 flex items-center justify-center">
+                        <i class="fas fa-brain text-white text-5xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Memory Match Game</h3>
+                        <p class="text-gray-600 mb-4">Test your memory by matching pairs of cards.</p>
+                        <button class="btn-primary nav-link" data-page="memory">Start Test</button>
+                    </div>
+                </div>
+                
+                <!-- Aim Test Card -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="h-40 bg-red-500 flex items-center justify-center">
+                        <i class="fas fa-crosshairs text-white text-5xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Aim Accuracy Test</h3>
+                        <p class="text-gray-600 mb-4">Test your aiming precision with moving targets.</p>
+                        <button class="btn-primary nav-link" data-page="aim">Start Test</button>
+                    </div>
+                </div>
+                
+                <!-- Leaderboard Card -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="h-40 bg-indigo-500 flex items-center justify-center">
+                        <i class="fas fa-trophy text-white text-5xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Leaderboard</h3>
+                        <p class="text-gray-600 mb-4">See how you rank against other players.</p>
+                        <button class="btn-primary nav-link" data-page="leaderboard">View Leaderboard</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reaction Time Test Page -->
+        <section id="reaction" class="page">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Reaction Time Test</h1>
+                <p class="text-center mb-4"><span class="player-game-name font-semibold text-blue-600"></span></p>
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <p class="mb-4 text-center">When the red box turns green, click as quickly as you can. Click anywhere to start.</p>
+                    
+                    <div id="reaction-box" class="reaction-box bg-red-500 rounded-lg flex items-center justify-center text-white text-xl font-bold">
+                        Click to start
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <p class="text-lg">Your time: <span id="reaction-time">0</span> ms</p>
+                        <p class="text-lg mt-2">Best time: <span id="best-reaction-time">0</span> ms</p>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <button id="reaction-reset" class="btn-secondary">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Typing Speed Test Page -->
+        <section id="typing" class="page">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Typing Speed Test</h1>
+                <p class="text-center mb-4"><span class="player-game-name font-semibold text-blue-600"></span></p>
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <p class="mb-4 text-center">Type the text below as quickly and accurately as you can. The timer will start when you begin typing.</p>
+                    
+                    <div class="typing-timer" id="typing-timer">01:00</div>
+                    
+                    <div class="typing-box">
+                        <div class="typing-text" id="typing-text"></div>
+                        <textarea id="typing-input" class="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+                    </div>
+                    
+                    <div class="text-center mb-4">
+                        <button id="typing-start" class="btn-primary mb-2">Start Test</button>
+                        <button id="typing-reset" class="btn-secondary ml-2">Reset</button>
+                    </div>
+                    
+                    <div id="typing-results" class="typing-results">
+                        <h3 class="text-xl font-bold mb-4">Your Results</h3>
+                        
+                        <div class="flex flex-wrap justify-center">
+                            <div class="typing-stat">
+                                <div class="typing-stat-value" id="typing-wpm">0</div>
+                                <div class="typing-stat-label">Words Per Minute</div>
+                            </div>
+                            
+                            <div class="typing-stat">
+                                <div class="typing-stat-value" id="typing-cpm">0</div>
+                                <div class="typing-stat-label">Characters Per Minute</div>
+                            </div>
+                            
+                            <div class="typing-stat">
+                                <div class="typing-stat-value" id="typing-accuracy">0%</div>
+                                <div class="typing-stat-label">Accuracy</div>
+                            </div>
+                            
+                            <div class="typing-stat">
+                                <div class="typing-stat-value" id="typing-correct">0</div>
+                                <div class="typing-stat-label">Correct Characters</div>
+                            </div>
+                            
+                            <div class="typing-stat">
+                                <div class="typing-stat-value" id="typing-incorrect">0</div>
+                                <div class="typing-stat-label">Incorrect Characters</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clicks Per Second Test Page -->
+        <section id="cps" class="page">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Clicks Per Second Test</h1>
+                <p class="text-center mb-4"><span class="player-game-name font-semibold text-blue-600"></span></p>
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <p class="mb-4 text-center">Click as many times as you can in the given time period.</p>
+                    
+                    <div id="cps-box" class="h-60 bg-blue-100 rounded-lg flex items-center justify-center cursor-pointer">
+                        <div class="text-center">
+                            <p id="cps-status" class="text-xl font-bold mb-2">Click to start</p>
+                            <p id="cps-timer" class="text-lg">Time: 10s</p>
+                            <p id="cps-clicks" class="text-lg">Clicks: 0</p>
+                            <p id="cps-rate" class="text-lg">CPS: 0.0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <button id="cps-reset" class="btn-secondary">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Memory Match Game Page -->
+        <section id="memory" class="page">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Memory Match Game</h1>
+                <p class="text-center mb-4"><span class="player-game-name font-semibold text-blue-600"></span></p>
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <p class="mb-4 text-center">Find all matching pairs of cards to win the game.</p>
+                    
+                    <div class="mb-4 text-center">
+                        <p>Moves: <span id="memory-moves">0</span></p>
+                        <p>Pairs found: <span id="memory-pairs">0</span> / 8</p>
+                    </div>
+                    
+                    <div id="memory-game" class="grid grid-cols-4 gap-4 max-w-lg mx-auto">
+                        <!-- Memory cards will be inserted here by JavaScript -->
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <button id="memory-reset" class="btn-secondary">New Game</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Aim Accuracy Test Page -->
+        <section id="aim" class="page">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Aim Accuracy Test</h1>
+                <p class="text-center mb-4"><span class="player-game-name font-semibold text-blue-600"></span></p>
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <p class="mb-4 text-center">Click on the targets as quickly as possible.</p>
+                    
+                    <div class="mb-4 text-center">
+                        <p>Targets hit: <span id="aim-hits">0</span> / 20</p>
+                        <p>Accuracy: <span id="aim-accuracy">0</span>%</p>
+                        <p>Average time: <span id="aim-avg-time">0</span> ms</p>
+                    </div>
+                    
+                    <div id="aim-container" class="h-96 bg-gray-100 rounded-lg relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <button id="aim-start" class="btn-primary">Start Test</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <button id="aim-reset" class="btn-secondary">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Page -->
+        <section id="leaderboard" class="page">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Leaderboard</h1>
+                
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div class="mb-6">
+                        <select id="leaderboard-test" class="w-full p-2 border rounded">
+                            <option value="reaction">Reaction Time Test</option>
+                            <option value="typing">Typing Speed Test</option>
+                            <option value="cps">Clicks Per Second Test</option>
+                            <option value="memory">Memory Match Game</option>
+                            <option value="aim">Aim Accuracy Test</option>
+                        </select>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-4 bg-gray-100 text-left">Rank</th>
+                                    <th class="py-3 px-4 bg-gray-100 text-left">Username</th>
+                                    <th class="py-3 px-4 bg-gray-100 text-left">Score</th>
+                                    <th class="py-3 px-4 bg-gray-100 text-left">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body">
+                                <!-- Will be dynamically populated based on player name -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certificate Generator Page -->
+        <section id="certificate" class="page">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Certificate Generator</h1>
+                
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <p class="mb-6 text-center">Generate a certificate to showcase your achievements.</p>
+                    
+                    <div class="max-w-md mx-auto mb-6">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Your Name</label>
+                            <input type="text" id="cert-name" class="w-full p-2 border rounded" placeholder="Enter your name">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Achievement</label>
+                            <select id="cert-achievement" class="w-full p-2 border rounded">
+                                <option value="reaction">Reaction Time Master</option>
+                                <option value="typing">Typing Speed Champion</option>
+                                <option value="cps">Click Speed Expert</option>
+                                <option value="memory">Memory Match Genius</option>
+                                <option value="aim">Aim Accuracy Pro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Score</label>
+                            <input type="text" id="cert-score" class="w-full p-2 border rounded" placeholder="Enter your score">
+                        </div>
+                        
+                        <div class="text-center">
+                            <button id="generate-cert" class="btn-primary">Generate Certificate</button>
+                        </div>
+                    </div>
+                    
+                    <div id="certificate-preview" class="hidden mt-8">
+                        <div class="certificate">
+                            <div class="certificate-content text-center">
+                                <h2 class="text-3xl mb-4 font-bold text-gray-800">Certificate of Achievement</h2>
+                                <p class="text-xl mb-6">This is to certify that</p>
+                                <p id="cert-preview-name" class="text-3xl mb-6 font-bold text-blue-600">John Doe</p>
+                                <p class="text-xl mb-6">has successfully achieved the title of</p>
+                                <p id="cert-preview-achievement" class="text-2xl mb-6 font-bold">Reaction Time Master</p>
+                                <p class="text-xl mb-6">with a score of</p>
+                                <p id="cert-preview-score" class="text-2xl mb-6 font-bold text-green-600">180 ms</p>
+                                <p class="text-xl mb-6">on <span id="cert-preview-date">May 15, 2023</span></p>
+                                <div class="mt-12 mb-4">
+                                    <div class="border-t-2 border-gray-300 w-48 mx-auto pt-2">
+                                        <p>Human Benchmark</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <button id="print-cert" class="btn-primary">Print Certificate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Page -->
+        <section id="login" class="page">
+            <div class="max-w-md mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-center">Login</h1>
+                
+                <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="mb-6">
+                        <div class="flex justify-center mb-6">
+                            <span class="inline-block bg-blue-600 rounded-full p-3">
+                                <i class="fas fa-user text-white text-xl"></i>
+                            </span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Email or Username</label>
+                            <input type="text" class="w-full p-3 border rounded" placeholder="Enter your email or username">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-2">Password</label>
+                            <input type="password" class="w-full p-3 border rounded" placeholder="Enter your password">
+                        </div>
+                        
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <input type="checkbox" id="remember" class="mr-2">
+                                <label for="remember">Remember me</label>
+                            </div>
+                            <a href="#" class="text-blue-600 hover:underline">Forgot password?</a>
+                        </div>
+                        
+                        <button class="w-full btn-primary py-3">Login</button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p>Don't have an account? <a href="#" class="text-blue-600 hover:underline">Sign up</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">Human Benchmark</h3>
+                    <p class="text-gray-400">Challenge your cognitive abilities</p>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com/share/14uFEwBr18s/" target="_blank" aria-label="Facebook">
+                        <div class="social-icon facebook">
+                            <i class="fab fa-facebook-f text-white"></i>
+                        </div>
+                    </a>
+                    <a href="https://x.com/PBandewar17409?t=P2ZipvLWk9z_xpWo7MbT-Q&s=09" target="_blank" aria-label="Twitter">
+                        <div class="social-icon twitter">
+                            <i class="fab fa-twitter text-white"></i>
+                        </div>
+                    </a>
+                    <a href="https://www.instagram.com/bandewar1121?igsh=dTg1NHQyMnRqN2d2" target="_blank" aria-label="Instagram">
+                        <div class="social-icon instagram">
+                            <i class="fab fa-instagram text-white"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                <p>&copy; 2023 Human Benchmark. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Player Name System
+        let playerName = '';
+        let playerScores = {
+            reaction: [],
+            typing: [],
+            cps: [],
+            memory: [],
+            aim: []
+        };
+
+        function initPlayerNameSystem() {
+            const playerNameModal = document.getElementById('playerNameModal');
+            const playerNameInput = document.getElementById('playerNameInput');
+            const savePlayerNameBtn = document.getElementById('savePlayerName');
+            const playerNameDisplay = document.getElementById('playerNameDisplay');
+            const currentPlayerName = document.getElementById('currentPlayerName');
+            const welcomePlayerName = document.getElementById('welcomePlayerName');
+            const playerGameNames = document.querySelectorAll('.player-game-name');
+            const certNameInput = document.getElementById('cert-name');
+
+            // Check if player name is already saved
+            const savedName = localStorage.getItem('humanBenchmarkPlayerName');
+            if (savedName) {
+                playerName = savedName;
+                playerNameModal.style.display = 'none';
+                playerNameDisplay.classList.remove('hidden');
+                currentPlayerName.textContent = playerName;
+                welcomePlayerName.textContent = `Welcome back, ${playerName}!`;
+                
+                // Update player name in all game pages
+                playerGameNames.forEach(el => {
+                    el.textContent = `Player: ${playerName}`;
+                });
+                
+                // Pre-fill certificate name
+                certNameInput.value = playerName;
+                
+                // Load saved scores
+                loadPlayerScores();
+                updateLeaderboard();
+            }
+
+            // Save player name
+            savePlayerNameBtn.addEventListener('click', function() {
+                const name = playerNameInput.value.trim();
+                if (name) {
+                    playerName = name;
+                    localStorage.setItem('humanBenchmarkPlayerName', playerName);
+                    
+                    playerNameModal.style.display = 'none';
+                    playerNameDisplay.classList.remove('hidden');
+                    currentPlayerName.textContent = playerName;
+                    welcomePlayerName.textContent = `Welcome, ${playerName}!`;
+                    
+                    // Update player name in all game pages
+                    playerGameNames.forEach(el => {
+                        el.textContent = `Player: ${playerName}`;
+                    });
+                    
+                    // Pre-fill certificate name
+                    certNameInput.value = playerName;
+                }
+            });
+
+            // Allow press Enter to submit name
+            playerNameInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    savePlayerNameBtn.click();
+                }
+            });
+        }
+
+        function saveScore(gameType, score) {
+            if (!playerName) return;
+            
+            // Load existing scores
+            loadPlayerScores();
+            
+            // Add new score
+            const newScore = {
+                score: score,
+                date: new Date().toISOString()
+            };
+            
+            playerScores[gameType].push(newScore);
+            
+            // Sort scores (lower is better for reaction, higher is better for others)
+            if (gameType === 'reaction') {
+                playerScores[gameType].sort((a, b) => a.score - b.score);
+            } else {
+                playerScores[gameType].sort((a, b) => b.score - a.score);
+            }
+            
+            // Keep only top 10 scores
+            if (playerScores[gameType].length > 10) {
+                playerScores[gameType] = playerScores[gameType].slice(0, 10);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('humanBenchmarkScores', JSON.stringify(playerScores));
+            
+            // Update leaderboard if visible
+            updateLeaderboard();
+            
+            // Show notification
+            showScoreNotification(gameType, score);
+        }
+
+        function loadPlayerScores() {
+            const savedScores = localStorage.getItem('humanBenchmarkScores');
+            if (savedScores) {
+                playerScores = JSON.parse(savedScores);
+            }
+        }
+
+        function updateLeaderboard() {
+            const leaderboardTest = document.getElementById('leaderboard-test');
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            
+            if (!leaderboardBody) return;
+            
+            const gameType = leaderboardTest.value;
+            const scores = playerScores[gameType] || [];
+            
+            // Clear existing rows
+            leaderboardBody.innerHTML = '';
+            
+            if (scores.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-3 px-4 border-b" colspan="4">No scores yet. Play some games first!</td>
+                `;
+                leaderboardBody.appendChild(row);
+                return;
+            }
+            
+            // Add player scores
+            scores.forEach((score, index) => {
+                const row = document.createElement('tr');
+                const date = new Date(score.date).toLocaleDateString();
+                let scoreDisplay = score.score;
+                
+                // Format score based on game type
+                if (gameType === 'reaction') {
+                    scoreDisplay = `${score.score} ms`;
+                } else if (gameType === 'typing') {
+                    scoreDisplay = `${score.score} WPM`;
+                } else if (gameType === 'cps') {
+                    scoreDisplay = `${score.score} CPS`;
+                } else if (gameType === 'memory') {
+                    scoreDisplay = `${score.score} moves`;
+                } else if (gameType === 'aim') {
+                    scoreDisplay = `${score.score}%`;
+                }
+                
+                row.innerHTML = `
+                    <td class="py-3 px-4 border-b">${index + 1}</td>
+                    <td class="py-3 px-4 border-b">${playerName}</td>
+                    <td class="py-3 px-4 border-b">${scoreDisplay}</td>
+                    <td class="py-3 px-4 border-b">${date}</td>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        }
+
+        function showScoreNotification(gameType, score) {
+            const notification = document.getElementById('scoreNotification');
+            const notificationText = document.getElementById('scoreNotificationText');
+            let scoreText = '';
+            
+            switch(gameType) {
+                case 'reaction':
+                    scoreText = `Reaction Time: ${score} ms`;
+                    break;
+                case 'typing':
+                    scoreText = `Typing Speed: ${score} WPM`;
+                    break;
+                case 'cps':
+                    scoreText = `Click Speed: ${score} CPS`;
+                    break;
+                case 'memory':
+                    scoreText = `Memory Game: ${score} moves`;
+                    break;
+                case 'aim':
+                    scoreText = `Aim Accuracy: ${score}%`;
+                    break;
+            }
+            
+            notificationText.textContent = `Score saved! ${scoreText}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Navigation System
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize player name system
+            initPlayerNameSystem();
+            
+            // Mobile menu toggle
+            const menuButton = document.getElementById('menuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    
+                    // Hide all pages
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.classList.remove('active');
+                    });
+                    
+                    // Show the selected page
+                    document.getElementById(pageId).classList.add('active');
+                    
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                    
+                    // Update leaderboard if viewing that page
+                    if (pageId === 'leaderboard') {
+                        updateLeaderboard();
+                    }
+                });
+            });
+            
+            // Reaction Time Test
+            initReactionTest();
+            
+            // Typing Speed Test
+            initTypingTest();
+            
+            // Clicks Per Second Test
+            initCPSTest();
+            
+            // Memory Match Game
+            initMemoryGame();
+            
+            // Aim Accuracy Test
+            initAimTest();
+            
+            // Certificate Generator
+            initCertificateGenerator();
+            
+            // Leaderboard test selection change
+            const leaderboardTest = document.getElementById('leaderboard-test');
+            if (leaderboardTest) {
+                leaderboardTest.addEventListener('change', updateLeaderboard);
+            }
+        });
+        
+        // Reaction Time Test
+        function initReactionTest() {
+            const reactionBox = document.getElementById('reaction-box');
+            const reactionTimeEl = document.getElementById('reaction-time');
+            const bestReactionTimeEl = document.getElementById('best-reaction-time');
+            const resetButton = document.getElementById('reaction-reset');
+            
+            let state = 'waiting'; // waiting, ready, started, clicked
+            let startTime;
+            let bestTime = Infinity;
+            let timeoutId;
+            
+            function resetTest() {
+                clearTimeout(timeoutId);
+                state = 'waiting';
+                reactionBox.style.backgroundColor = '#ef4444'; // red
+                reactionBox.textContent = 'Click to start';
+            }
+            
+            resetButton.addEventListener('click', resetTest);
+            
+            reactionBox.addEventListener('click', function() {
+                if (state === 'waiting') {
+                    // Start the test
+                    state = 'ready';
+                    reactionBox.style.backgroundColor = '#facc15'; // yellow
+                    reactionBox.textContent = 'Wait for green...';
+                    
+                    // Random delay between 1-5 seconds
+                    const delay = Math.floor(Math.random() * 4000) + 1000;
+                    timeoutId = setTimeout(function() {
+                        state = 'started';
+                        startTime = new Date().getTime();
+                        reactionBox.style.backgroundColor = '#22c55e'; // green
+                        reactionBox.textContent = 'Click now!';
+                    }, delay);
+                    
+                } else if (state === 'ready') {
+                    // Clicked too early
+                    clearTimeout(timeoutId);
+                    state = 'waiting';
+                    reactionBox.style.backgroundColor = '#ef4444'; // red
+                    reactionBox.textContent = 'Too early! Click to try again.';
+                    
+                } else if (state === 'started') {
+                    // Successful click, record time
+                    const endTime = new Date().getTime();
+                    const reactionTime = endTime - startTime;
+                    
+                    state = 'clicked';
+                    reactionTimeEl.textContent = reactionTime;
+                    
+                    if (reactionTime < bestTime) {
+                        bestTime = reactionTime;
+                        bestReactionTimeEl.textContent = bestTime;
+                    }
+                    
+                    reactionBox.style.backgroundColor = '#3b82f6'; // blue
+                    reactionBox.textContent = `${reactionTime} ms - Click to try again`;
+                    
+                    // Save score
+                    saveScore('reaction', reactionTime);
+                    
+                } else if (state === 'clicked') {
+                    // Reset for next attempt
+                    resetTest();
+                }
+            });
+        }
+        
+        // Typing Speed Test
+        function initTypingTest() {
+            const typingText = document.getElementById('typing-text');
+            const typingInput = document.getElementById('typing-input');
+            const typingTimer = document.getElementById('typing-timer');
+            const typingStart = document.getElementById('typing-start');
+            const typingReset = document.getElementById('typing-reset');
+            const typingResults = document.getElementById('typing-results');
+            
+            // Results elements
+            const typingWpm = document.getElementById('typing-wpm');
+            const typingCpm = document.getElementById('typing-cpm');
+            const typingAccuracy = document.getElementById('typing-accuracy');
+            const typingCorrect = document.getElementById('typing-correct');
+            const typingIncorrect = document.getElementById('typing-incorrect');
+            
+            // Sample texts for typing test
+            const sampleTexts = [
+                "The quick brown fox jumps over the lazy dog. This pangram contains every letter of the English alphabet. It is often used to test typewriters or computer keyboards, or to display examples of fonts.",
+                "Programming today is a race between software engineers striving to build bigger and better idiot-proof programs, and the universe trying to produce bigger and better idiots. So far, the universe is winning.",
+                "The greatest glory in living lies not in never falling, but in rising every time we fall. The way to get started is to quit talking and begin doing. Your time is limited, so don't waste it living someone else's life.",
+                "Success is not final, failure is not fatal: It is the courage to continue that counts. It is better to fail in originality than to succeed in imitation. The road to success and the road to failure are almost exactly the same.",
+                "Life is what happens when you're busy making other plans. The future belongs to those who believe in the beauty of their dreams. Tell me and I forget. Teach me and I remember. Involve me and I learn."
+            ];
+            
+            let currentText = '';
+            let timeLeft = 60;
+            let timer;
+            let timerStarted = false;
+            let correctCharacters = 0;
+            let incorrectCharacters = 0;
+            let totalCharactersTyped = 0;
+            
+            // Generate the text for typing
+            function generateText() {
+                // Randomly select one of the sample texts
+                currentText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+                
+                // Clear the previous content
+                typingText.innerHTML = '';
+                
+                // Create spans for each character
+                for (let i = 0; i < currentText.length; i++) {
+                    const span = document.createElement('span');
+                    span.textContent = currentText[i];
+                    typingText.appendChild(span);
+                }
+                
+                // Add active class to first character
+                typingText.children[0].classList.add('active');
+            }
+            
+            // Start the typing test
+            function startTest() {
+                generateText();
+                typingInput.value = '';
+                typingInput.disabled = false;
+                typingInput.focus();
+                
+                // Reset results
+                correctCharacters = 0;
+                incorrectCharacters = 0;
+                totalCharactersTyped = 0;
+                timeLeft = 60;
+                updateTimer();
+                
+                // Hide results if visible
+                typingResults.style.display = 'none';
+                
+                // Enable input
+                typingInput.addEventListener('input', checkTyping);
+                
+                // Change button state
+                typingStart.disabled = true;
+            }
+            
+            // Update the timer display
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                typingTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            // Start the timer
+            function startTimer() {
+                timerStarted = true;
+                timer = setInterval(() => {
+                    timeLeft--;
+                    updateTimer();
+                    
+                    if (timeLeft <= 0) {
+                        endTest();
+                    }
+                }, 1000);
+            }
+            
+            // Check typing and update UI
+            function checkTyping() {
+                if (!timerStarted) {
+                    startTimer();
+                }
+                
+                const inputValue = typingInput.value;
+                const characters = typingText.querySelectorAll('span');
+                
+                totalCharactersTyped = inputValue.length;
+                
+                // Reset all character styling
+                for (let i = 0; i < characters.length; i++) {
+                    characters[i].classList.remove('active', 'correct', 'incorrect');
+                }
+                
+                // Mark correct and incorrect characters
+                correctCharacters = 0;
+                incorrectCharacters = 0;
+                
+                for (let i = 0; i < inputValue.length && i < characters.length; i++) {
+                    if (inputValue[i] === currentText[i]) {
+                        characters[i].classList.add('correct');
+                        correctCharacters++;
+                    } else {
+                        characters[i].classList.add('incorrect');
+                        incorrectCharacters++;
+                    }
+                }
+                
+                // Mark the current character as active if within bounds
+                if (inputValue.length < characters.length) {
+                    characters[inputValue.length].classList.add('active');
+                }
+                
+                // Check if all text is typed
+                if (inputValue.length === currentText.length) {
+                    endTest();
+                }
+            }
+            
+            // End the typing test
+            function endTest() {
+                clearInterval(timer);
+                timerStarted = false;
+                typingInput.disabled = true;
+                typingInput.removeEventListener('input', checkTyping);
+                
+                // Calculate results
+                const timeSpent = 60 - timeLeft; // in seconds
+                const totalWords = correctCharacters / 5; // average word length is 5 characters
+                const wpm = Math.round(totalWords * (60 / timeSpent));
+                const cpm = Math.round(correctCharacters * (60 / timeSpent));
+                const accuracy = Math.round((correctCharacters / totalCharactersTyped) * 100);
+                
+                // Update results display
+                typingWpm.textContent = wpm;
+                typingCpm.textContent = cpm;
+                typingAccuracy.textContent = `${accuracy}%`;
+                typingCorrect.textContent = correctCharacters;
+                typingIncorrect.textContent = incorrectCharacters;
+                
+                // Show results
+                typingResults.style.display = 'block';
+                
+                // Enable start button
+                typingStart.disabled = false;
+                
+                // Save score
+                saveScore('typing', wpm);
+            }
+            
+            // Reset the typing test
+            function resetTest() {
+                clearInterval(timer);
+                timerStarted = false;
+                typingInput.value = '';
+                typingInput.disabled = false;
+                typingText.innerHTML = '';
+                timeLeft = 60;
+                updateTimer();
+                typingResults.style.display = 'none';
+                typingStart.disabled = false;
+            }
+            
+            // Event listeners
+            typingStart.addEventListener('click', startTest);
+            typingReset.addEventListener('click', resetTest);
+            
+            // Initial setup
+            updateTimer();
+        }
+        
+        // Clicks Per Second Test
+        function initCPSTest() {
+            const cpsBox = document.getElementById('cps-box');
+            const cpsStatus = document.getElementById('cps-status');
+            const cpsTimer = document.getElementById('cps-timer');
+            const cpsClicks = document.getElementById('cps-clicks');
+            const cpsRate = document.getElementById('cps-rate');
+            const resetButton = document.getElementById('cps-reset');
+            
+            let state = 'waiting'; // waiting, started, finished
+            let clicks = 0;
+            let startTime;
+            let timeLeft = 10;
+            let intervalId;
+            let finalCPS = 0;
+            
+            function resetTest() {
+                clearInterval(intervalId);
+                state = 'waiting';
+                clicks = 0;
+                timeLeft = 10;
+                finalCPS = 0;
+                cpsStatus.textContent = 'Click to start';
+                cpsTimer.textContent = 'Time: 10s';
+                cpsClicks.textContent = 'Clicks: 0';
+                cpsRate.textContent = 'CPS: 0.0';
+            }
+            
+            resetButton.addEventListener('click', resetTest);
+            
+            cpsBox.addEventListener('click', function() {
+                if (state === 'waiting') {
+                    // Start the test
+                    state = 'started';
+                    startTime = new Date().getTime();
+                    clicks = 0;
+                    timeLeft = 10;
+                    
+                    cpsStatus.textContent = 'Click as fast as you can!';
+                    
+                    intervalId = setInterval(function() {
+                        timeLeft -= 0.1;
+                        timeLeft = Math.round(timeLeft * 10) / 10; // Fix floating point issues
+                        
+                        if (timeLeft <= 0) {
+                            clearInterval(intervalId);
+                            state = 'finished';
+                            finalCPS = Math.round((clicks / 10) * 10) / 10;
+                            cpsStatus.textContent = 'Test finished!';
+                            cpsRate.textContent = `CPS: ${finalCPS}`;
+                            
+                            // Save score
+                            saveScore('cps', finalCPS);
+                        }
+                        
+                        cpsTimer.textContent = `Time: ${timeLeft.toFixed(1)}s`;
+                    }, 100);
+                    
+                } else if (state === 'started') {
+                    // Count clicks
+                    clicks++;
+                    cpsClicks.textContent = `Clicks: ${clicks}`;
+                    const currentCPS = Math.round((clicks / (10 - timeLeft)) * 10) / 10;
+                    cpsRate.textContent = `CPS: ${currentCPS.toFixed(1)}`;
+                    
+                } else if (state === 'finished') {
+                    // Reset for next attempt
+                    resetTest();
+                }
+            });
+        }
+        
+        // Memory Match Game
+        function initMemoryGame() {
+            const gameContainer = document.getElementById('memory-game');
+            const movesEl = document.getElementById('memory-moves');
+            const pairsEl = document.getElementById('memory-pairs');
+            const resetButton = document.getElementById('memory-reset');
+            
+            let cards = [];
+            let hasFlippedCard = false;
+            let lockBoard = false;
+            let firstCard, secondCard;
+            let moves = 0;
+            let pairs = 0;
+            
+            // Card symbols
+            const symbols = ['🎮', '🎯', '🎲', '🎭', '🎨', '🎪', '🎫', '🎬'];
+            
+            function createCard(symbol) {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.symbol = symbol;
+                
+                const cardInner = document.createElement('div');
+                cardInner.className = 'memory-card-inner';
+                
+                const cardFront = document.createElement('div');
+                cardFront.className = 'memory-card-front bg-blue-500 rounded-md';
+                cardFront.textContent = '?';
+                
+                const cardBack = document.createElement('div');
+                cardBack.className = 'memory-card-back bg-green-400 rounded-md';
+                cardBack.textContent = symbol;
+                
+                cardInner.appendChild(cardFront);
+                cardInner.appendChild(cardBack);
+                card.appendChild(cardInner);
+                
+                card.addEventListener('click', flipCard);
+                return card;
+            }
+            
+            function generateCards() {
+                // Clear existing cards
+                gameContainer.innerHTML = '';
+                
+                // Create pairs of cards
+                cards = [];
+                for (let symbol of symbols) {
+                    cards.push(createCard(symbol));
+                    cards.push(createCard(symbol));
+                }
+                
+                // Shuffle cards
+                cards.sort(() => Math.random() - 0.5);
+                
+                // Add cards to the game
+                cards.forEach(card => {
+                    gameContainer.appendChild(card);
+                });
+            }
+            
+            function flipCard() {
+                if (lockBoard) return;
+                if (this === firstCard) return;
+                
+                this.classList.add('flipped');
+                
+                if (!hasFlippedCard) {
+                    // First card flipped
+                    hasFlippedCard = true;
+                    firstCard = this;
+                    return;
+                }
+                
+                // Second card flipped
+                secondCard = this;
+                moves++;
+                movesEl.textContent = moves;
+                
+                checkForMatch();
+            }
+            
+            function checkForMatch() {
+                const isMatch = firstCard.dataset.symbol === secondCard.dataset.symbol;
+                
+                if (isMatch) {
+                    disableCards();
+                    pairs++;
+                    pairsEl.textContent = pairs;
+                    
+                    if (pairs === symbols.length) {
+                        setTimeout(() => {
+                            alert(`Congratulations! You completed the game in ${moves} moves.`);
+                            // Save score (fewer moves is better)
+                            saveScore('memory', moves);
+                        }, 500);
+                    }
+                } else {
+                    unflipCards();
+                }
+            }
+            
+            function disableCards() {
+                firstCard.removeEventListener('click', flipCard);
+                secondCard.removeEventListener('click', flipCard);
+                
+                resetBoard();
+            }
+            
+            function unflipCards() {
+                lockBoard = true;
+                
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    
+                    resetBoard();
+                }, 1000);
+            }
+            
+            function resetBoard() {
+                [hasFlippedCard, lockBoard] = [false, false];
+                [firstCard, secondCard] = [null, null];
+            }
+            
+            function resetGame() {
+                moves = 0;
+                pairs = 0;
+                movesEl.textContent = moves;
+                pairsEl.textContent = pairs;
+                resetBoard();
+                generateCards();
+            }
+            
+            resetButton.addEventListener('click', resetGame);
+            
+            // Initialize game
+            resetGame();
+        }
+        
+        // Aim Accuracy Test
+        function initAimTest() {
+            const aimContainer = document.getElementById('aim-container');
+            const aimStartButton = document.getElementById('aim-start');
+            const aimHitsEl = document.getElementById('aim-hits');
+            const aimAccuracyEl = document.getElementById('aim-accuracy');
+            const aimAvgTimeEl = document.getElementById('aim-avg-time');
+            const aimResetButton = document.getElementById('aim-reset');
+            
+            let gameActive = false;
+            let hits = 0;
+            let misses = 0;
+            let targetsLeft = 20;
+            let times = [];
+            let lastTargetTime;
+            let currentTarget = null;
+            let finalAccuracy = 0;
+            
+            function resetGame() {
+                gameActive = false;
+                hits = 0;
+                misses = 0;
+                targetsLeft = 20;
+                times = [];
+                currentTarget = null;
+                finalAccuracy = 0;
+                
+                aimHitsEl.textContent = hits;
+                aimAccuracyEl.textContent = '0';
+                aimAvgTimeEl.textContent = '0';
+                
+                // Clear any existing targets
+                const targets = aimContainer.querySelectorAll('.aim-target');
+                targets.forEach(target => target.remove());
+                
+                // Show start button
+                aimStartButton.style.display = 'block';
+            }
+            
+            function startGame() {
+                gameActive = true;
+                aimStartButton.style.display = 'none';
+                createTarget();
+            }
+            
+            function createTarget() {
+                if (!gameActive) return;
+                
+                if (targetsLeft <= 0) {
+                    endGame();
+                    return;
+                }
+                
+                // Remove any existing target
+                if (currentTarget) {
+                    currentTarget.remove();
+                }
+                
+                // Create new target
+                const target = document.createElement('div');
+                target.className = 'aim-target';
+                
+                // Random position within container
+                const containerRect = aimContainer.getBoundingClientRect();
+                const targetSize = 50; // Target width/height
+                const maxX = containerRect.width - targetSize;
+                const maxY = containerRect.height - targetSize;
+                
+                const left = Math.floor(Math.random() * maxX);
+                const top = Math.floor(Math.random() * maxY);
+                
+                target.style.left = `${left}px`;
+                target.style.top = `${top}px`;
+                target.textContent = targetsLeft;
+                
+                target.addEventListener('click', hitTarget);
+                
+                aimContainer.appendChild(target);
+                currentTarget = target;
+                
+                lastTargetTime = new Date().getTime();
+            }
+            
+            function hitTarget() {
+                if (!gameActive) return;
+                
+                const hitTime = new Date().getTime() - lastTargetTime;
+                times.push(hitTime);
+                
+                hits++;
+                targetsLeft--;
+                
+                aimHitsEl.textContent = hits;
+                updateAccuracy();
+                updateAvgTime();
+                
+                createTarget();
+            }
+            
+            function updateAccuracy() {
+                const totalAttempts = hits + misses;
+                finalAccuracy = totalAttempts > 0 ? Math.round((hits / totalAttempts) * 100) : 0;
+                aimAccuracyEl.textContent = finalAccuracy;
+            }
+            
+            function updateAvgTime() {
+                if (times.length === 0) return;
+                
+                const sum = times.reduce((a, b) => a + b, 0);
+                const avg = Math.round(sum / times.length);
+                aimAvgTimeEl.textContent = avg;
+            }
+            
+            function endGame() {
+                gameActive = false;
+                alert(`Test complete! Your accuracy: ${finalAccuracy}%, Average time: ${aimAvgTimeEl.textContent}ms`);
+                
+                // Save score
+                saveScore('aim', finalAccuracy);
+            }
+            
+            // Click on container but not on target = miss
+            aimContainer.addEventListener('click', function(e) {
+                if (!gameActive) return;
+                if (e.target === aimContainer) {
+                    misses++;
+                    updateAccuracy();
+                }
+            });
+            
+            aimStartButton.addEventListener('click', startGame);
+            aimResetButton.addEventListener('click', resetGame);
+            
+            // Initialize
+            resetGame();
+        }
+        
+        // Certificate Generator
+        function initCertificateGenerator() {
+            const generateButton = document.getElementById('generate-cert');
+            const printButton = document.getElementById('print-cert');
+            const certificatePreview = document.getElementById('certificate-preview');
+            
+            // Pre-fill with player name if available
+            if (playerName) {
+                document.getElementById('cert-name').value = playerName;
+            }
+            
+            generateButton.addEventListener('click', function() {
+                const name = document.getElementById('cert-name').value.trim();
+                const achievement = document.getElementById('cert-achievement');
+                const score = document.getElementById('cert-score').value.trim();
+                
+                if (!name) {
+                    alert('Please enter your name.');
+                    return;
+                }
+                
+                if (!score) {
+                    alert('Please enter your score.');
+                    return;
+                }
+                
+                // Update certificate preview
+                document.getElementById('cert-preview-name').textContent = name;
+                document.getElementById('cert-preview-achievement').textContent = 
+                    achievement.options[achievement.selectedIndex].text;
+                document.getElementById('cert-preview-score').textContent = score;
+                
+                // Current date
+                const today = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('cert-preview-date').textContent = today.toLocaleDateString('en-US', options);
+                
+                // Show certificate preview
+                certificatePreview.classList.remove('hidden');
+            });
+            
+            printButton.addEventListener('click', function() {
+                window.print();
+            });
+        }
+    </script>
+</body>
+</html>
